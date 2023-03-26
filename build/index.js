@@ -1,0 +1,72 @@
+const express = require('express');
+const app = express();
+const puppeteer = require("puppeteer");
+require('dotenv').config();
+
+const username = process.env.TW_USER;
+const senha = process.env.TW_SENHA;
+
+
+app.get('/', (req, res) => {
+  const ip = req.ip;
+  res.send(`Olá, mundo! esse é o seu ${ip}`);
+});
+
+app.get('/contatoas', (req, res) => {
+    (async function abrirLinks() {
+        const browser = await puppeteer.launch({ headless: false });
+        const page = await browser.newPage();
+      
+        await page.goto("https://twitter.com/i/flow/login");
+        await page.waitForTimeout(1000)
+        await page.type('[class="css-1dbjc4n r-1roi411 r-z2wwpe r-rs99b7 r-18u37iz"]', `${username}`);
+        await page.waitForTimeout(500)
+       await page.click('[class="css-18t94o4 css-1dbjc4n r-sdzlij r-1phboty r-rs99b7 r-ywje51 r-usiww2 r-2yi16 r-1qi8awa r-1ny4l3l r-ymttw5 r-o7ynqc r-6416eg r-lrvibr r-13qz1uu"]');
+       await page.waitForTimeout(1000)
+       await page.type('[type="password"]', `${senha}`)
+        await page.waitForTimeout(1000)
+        await page.click('[class="css-1dbjc4n r-pw2am6"]');
+        await page.waitForTimeout(1000)
+        await page.goto("https://twitter.com/compose/tweet");
+        await page.waitForTimeout(1000)
+        await page.type('[class="public-DraftStyleDefault-block public-DraftStyleDefault-ltr"]', "Teste")
+        await page.waitForTimeout(800)
+        await page.click('[class="css-18t94o4 css-1dbjc4n r-l5o3uw r-42olwf r-sdzlij r-1phboty r-rs99b7 r-19u6a5r r-2yi16 r-1qi8awa r-1ny4l3l r-ymttw5 r-o7ynqc r-6416eg r-lrvibr"]');
+      
+      
+        //await browser.close();
+      
+        /*setInterval(() => {
+          abrirLinks();
+        }, 210000); 
+      */  
+      })();
+  });
+
+  app.get('/usuarios/1', function(req, res) {
+    const usuario = {
+      nome: 'João',
+      sobrenome: 'Silva',
+      idade: 25,
+      cidade: 'São Paulo'
+    };
+    res.send(`olá ${usuario.nome} ${usuario.sobrenome}, por voce ter ${usuario.idade} e morar em ${usuario.cidade} voce esta apito a participar desse programa`);
+  });
+
+  app.get('/users', (req, res) => {
+    const name = req.query.name;
+    const age = req.query.age;
+    res.send(`Name: ${name}, Age: ${age}`);
+  });
+  
+  app.post('/login', function(req, res) {
+    const username = req.body.username;
+    const password = req.body.password;
+    
+    // Código para autenticar o usuário
+    res.send(`olá ${username}`);
+  });
+
+app.listen(3000, () => {
+  console.log('Servidor iniciado na porta 3000');
+});
